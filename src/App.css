@@ -1,38 +1,137 @@
+/* Base styles */
 .App {
+  background-color: #ffffff;
+  color: #000000;
   text-align: center;
+  padding: 20px;
 }
 
-.App-logo {
-  height: 40vmin;
-  pointer-events: none;
+.App.dark-mode {
+  background-color: #333;
+  color: #ffffff;
+  background-size: cover;
 }
 
-@media (prefers-reduced-motion: no-preference) {
-  .App-logo {
-    animation: App-logo-spin infinite 20s linear;
+button {
+  background-color: #007bff;
+  color: #ffffff;
+  padding: 10px 20px;
+  border: none;
+  cursor: pointer;
+  margin: 10px;
+  border-radius: 4px;
+}
+
+button.dark-mode {
+  background-color: #555;
+  color: #ddd;
+}
+
+input[type="text"] {
+  padding: 8px;
+  margin: 10px;
+  width: 80%;
+  max-width: 300px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+}
+
+.weather-info {
+  background-size: cover;
+  background-position: center;
+  padding: 15px;
+  margin-top: 20px;
+  border-radius: 8px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  margin-left: auto;
+  margin-right: auto;
+  font-size: larger;
+}
+
+.city-heading-style {
+  font-family: cursive;
+  font-weight: bold;
+}
+
+.air-combination-style {
+  font-family: Papyrus;
+  font-weight: bold;
+}
+
+.logo {
+  width: 50px;
+  height: 50px;
+  margin-right: 10px;
+}
+
+@media (max-width: 768px) {
+  .weather-info {
+    background: url('https://preview.redd.it/okanny1eogq51.png?width=640&crop=smart&auto=webp&s=e5b68ff9b2de9b3e72e2aeea964d3bd1bf1153df') no-repeat center center;
+    background-size: cover;
+    color: #ffffff;
   }
-}
 
-.App-header {
-  background-color: #282c34;
-  min-height: 100vh;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  font-size: calc(10px + 2vmin);
-  color: white;
-}
-
-.App-link {
-  color: #61dafb;
-}
-
-@keyframes App-logo-spin {
-  from {
-    transform: rotate(0deg);
+  .App-header {
+    flex-direction: column;
   }
-  to {
-    transform: rotate(360deg);
+
+  .header-content {
+    flex-direction: column;
+    text-align: center;
   }
+
+  .logo {
+    margin-right: 0;
+    margin-bottom: 10px;
+  }
+
+  
+}
+
+@media (min-width: 769px) and (max-width: 1024px) {
+  .weather-info {
+    background: url('https://famagusta.news/storage/2022/05/sunset-sun-rays-beach-sand.jpg') no-repeat center center;
+    background-size: cover;
+    color: #ffffff;
+  }
+
+  .App-header {
+    flex-direction: row;
+  }
+
+  .header-content {
+    flex-direction: row;
+  }
+
+  .logo {
+    margin-right: 10px;
+    margin-bottom: 0;
+  }
+
+
+}
+
+@media (min-width: 1025px) {
+  .weather-info {
+    background: url('https://st2.depositphotos.com/1162190/6186/i/450/depositphotos_61868743-stock-photo-weather-forecast-concept.jpg');
+    color: rgb(198, 245, 206);
+    width: 1000px;
+  }
+
+  .App-header {
+    flex-direction: row;
+    justify-content: center;
+    align-items: center;
+  }
+
+  .header-content {
+    display: flex;
+    align-items: center;
+  }
+
+  .logo {
+    margin-right: 10px;
+  }
+
+  
 }
