@@ -104,12 +104,13 @@ class App extends Component {
 
           {weather && (
             <div className="weather-info">
-              <h2 className='city-heading-style'>{weather.name}</h2>
+              <h2 className='city-heading-style'><span><img src='https://img.icons8.com/?size=100&id=0rhd6SF82e8Y&format=png&color=000000' alt='location'/></span>{weather.name}</h2>
               <div className='air-combination-style'>
-                <p>Temperature: {weather.main.temp}°C</p>
-                <p>Date & Time: {new Date(weather.dt * 1000).toLocaleString()}</p>
-                <p>Weather: {weather.weather[0].description}</p>
-                <p>Humidity: {weather.main.humidity}%</p>
+                
+                <p><span><img src='https://img.icons8.com/?size=100&id=52585&format=png&color=000000' alt='location'/></span>{weather.main.temp}°C</p>
+                <p><span><img src='https://img.icons8.com/?size=100&id=48189&format=png&color=000000' alt='location'/></span>{new Date(weather.dt * 1000).toLocaleString()}</p>
+                <p><span><img src='https://img.icons8.com/?size=100&id=21754&format=png&color=000000' alt='location'/></span>{weather.weather[0].description}</p>
+                <p><span><img src='https://img.icons8.com/?size=100&id=32604&format=png&color=000000' alt='location'/></span>{weather.main.humidity}%</p>
               </div>
             </div>
           )}
