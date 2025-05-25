@@ -8,7 +8,9 @@ class App extends Component {
     super(props);
     this.state = {
       weather: null,
-    isDarkMode: false,
+      isDarkMode: false,
+      loading: false,
+      error: ''
     };
   }
 
@@ -19,98 +21,109 @@ class App extends Component {
   getCurrentLocation = () => {
     if (navigator.geolocation) {
       navigator.geolocation.getCurrentPosition(
-        this.handleLocationSuccess,
-        this.handleLocationError
+        ({ coords }) => this.fetchWeather(coords.latitude, coords.longitude),
+        () => this.setState({ error: 'Unable to retrieve location.' })
       );
     } else {
       this.setState({ error: 'Geolocation is not supported by this browser.' });
     }
   };
 
-  handleLocationSuccess = (position) => {
-    const { latitude, longitude } = position.coords;
-    this.fetchWeatherByCoords(latitude, longitude);
-  };
-
-  handleLocationError = () => {
-    this.setState({ error: 'Unable to retrieve location.' });
-  };
-
-  fetchWeatherByCoords = async (latitude, longitude) => {
-    this.setState({ loading: true });
+  fetchWeather = async (lat, lon) => {
+    this.setState({ loading: true, error: '' });
     try {
-      const url = `https://api.openweathermap.org/data/2.5/weather?lat=${latitude}&lon=${longitude}&appid=${API_KEY}&units=metric`;
+      const url = `https://api.openweathermap.org/data/2.5/weather?lat=${lat}&lon=${lon}&appid=${API_KEY}&units=metric`;
       const response = await fetch(url);
-      if (!response.ok) {
-        throw new Error('Failed to fetch weather data for current location.');
-      }
+      if (!response.ok) throw new Error('Failed to fetch weather data.');
       const data = await response.json();
-      this.setState({ weather: data, error: '', loading: false });
-    } catch (err) {
-      this.setState({ error: err.message || 'Failed to fetch weather data. Please try again.', loading: false });
+      this.setState({ weather: data, loading: false });
+    } catch (error) {
+      this.setState({ error: error.message, loading: false });
     }
   };
 
-  handleSearch = async (e) => {
+  fetchWeatherByCity = async (e) => {
     e.preventDefault();
-    const city = e.target.elements.city.value;
-    this.setState({ loading: true });
+    const city = e.target.elements.city.value.trim();
+    if (!city) return;
+
+    this.setState({ loading: true, error: '' });
 
     try {
       const url = `https://api.openweathermap.org/data/2.5/weather?q=${city}&appid=${API_KEY}&units=metric`;
       const response = await fetch(url);
-      if (!response.ok) {
-        throw new Error('City not found or other API error');
-      }
+      if (!response.ok) throw new Error('City not found.');
       const data = await response.json();
-      this.setState({ weather: data, error: '', loading: false });
-    } catch (err) {
-      this.setState({ error: err.message || 'Failed to fetch weather data. Please try again.', loading: false });
+      this.setState({ weather: data, loading: false });
+    } catch (error) {
+      this.setState({ error: error.message, loading: false });
     }
 
     e.target.reset();
   };
 
   toggleTheme = () => {
-    this.setState(prevState => ({
-      isDarkMode: !prevState.isDarkMode
-    }), () => {
-      document.body.classList.toggle('dark-mode', this.state.isDarkMode);
-    });
+    this.setState(
+      prevState => ({ isDarkMode: !prevState.isDarkMode }),
+      () => document.body.classList.toggle('dark-mode', this.state.isDarkMode)
+    );
   };
 
   render() {
-    const { weather, isDarkMode } = this.state;
+    const { weather, isDarkMode, loading, error } = this.state;
 
     return (
       <div className={`App ${isDarkMode ? 'dark-mode' : ''}`}>
         <header className="App-header">
           <div className="header-content">
-            <img src='https://i.pinimg.com/originals/77/0b/80/770b805d5c99c7931366c2e84e88f251.png' alt='weather-app' className="logo" />
+            <img
+              src="https://i.pinimg.com/originals/77/0b/80/770b805d5c99c7931366c2e84e88f251.png"
+              alt="weather-app"
+              className="logo"
+            />
             <h1>Weather App</h1>
           </div>
         </header>
 
         <main>
-          <form onSubmit={this.handleSearch}>
+          <form onSubmit={this.fetchWeatherByCity}>
             <input type="text" name="city" placeholder="Enter city name" required />
             <button type="submit">Search</button>
           </form>
-          <button onClick={this.toggleTheme}>
-            {isDarkMode ? 'Switch to Light Mode' : 'Switch to Dark Mode'}
+
+          <button className="toggle-btn" onClick={this.toggleTheme}>
+            {isDarkMode ? 'Light Mode' : 'Dark Mode'}
           </button>
 
-          
+          {loading && <p className="loading">Loading weather data...</p>}
+          {error && <p className="error">{error}</p>}
 
           {weather && (
             <div className="weather-info">
-              <h2 className='city-heading-style'><span><img src='https://img.icons8.com/?size=100&id=0rhd6SF82e8Y&format=png&color=000000' alt='location'/></span>{weather.name}</h2>
-              <div className='air-combination-style'>
-                
-                <p><span><img src='https://img.icons8.com/?size=100&id=52585&format=png&color=000000' alt='location'/></span>{weather.main.temp}°C</p>
-                <p><span><img src='https://img.icons8.com/?size=100&id=48189&format=png&color=000000' alt='location'/></span>{new Date(weather.dt * 1000).toLocaleString()}</p>
-                <p><span><img src='https://img.icons8.com/?size=100&id=21754&format=png&color=000000' alt='location'/></span>{weather.weather[0].description}</p>
-                <p><span><img src='https://img.icons8.com/?size=100&id=32604&format=png&color=000000' alt='location'/></span>{weather.main.humidity}%</p>
+              <h2 className="city-heading-style">
+                <img
+                  src="https://img.icons8.com/?size=100&id=0rhd6SF82e8Y&format=png&color=000000"
+                  alt="location"
+                />
+                {weather.name}
+              </h2>
+              <div className="air-combination-style">
+                <p>
+                  <img src="https://img.icons8.com/?size=100&id=52585&format=png&color=000000" alt="temperature" />
+                  {weather.main.temp}°C
+                </p>
+                <p>
+                  <img src="https://img.icons8.com/?size=100&id=48189&format=png&color=000000" alt="time" />
+                  {new Date(weather.dt * 1000).toLocaleString()}
+                </p>
+                <p>
+                  <img src="https://img.icons8.com/?size=100&id=21754&format=png&color=000000" alt="description" />
+                  {weather.weather[0].description}
+                </p>
+                <p>
+                  <img src="https://img.icons8.com/?size=100&id=32604&format=png&color=000000" alt="humidity" />
+                  {weather.main.humidity}%
+                </p>
               </div>
             </div>
           )}
